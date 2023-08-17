@@ -1,0 +1,44 @@
+<html>
+
+<head>
+    <title>HTML to Adapt JSON</title>
+    <link rel="stylesheet" target="_blank" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css" />
+    <script src="script.js" async></script>
+</head>
+
+<body>
+    <h1>HTML to Adapt Framework JSON Converter</h1>
+    <button id="show-dialog">Show Instructions</button>
+    <dialog id="instructions-dialog">
+        <h2>Instructions:</h2>
+        <p>When formatting your HTML or Google Document, please follow these guidelines:</p>
+        <ul>
+            <li>Use <code>&lt;h1&gt;</code> tags for main titles that you want to be treated as separate sections in the
+                JSON output.</li>
+            <li>Use <code>&lt;h2&gt;</code> tags for sub-sections within an <code>&lt;h1&gt;</code> section. These will
+                be treated as accordion items in the JSON output.</li>
+            <li>Use <code>&lt;p&gt;</code> tags for the content of each section or sub-section. The content inside these
+                tags will be included in the body of the corresponding block or component object in the JSON output.
+            </li>
+            <!-- <li>If you want to include an image, use an <code>&lt;img&gt;</code> tag and specify the source of the image with the <code>src</code> attribute.</li> -->
+            <li>Ensure that all HTML elements are properly nested and closed. Use a code editor or HTML validator to
+                check your HTML code for errors.</li>
+        </ul>
+        <p>Once you've formatted your HTML or Google Document according to these guidelines, you can copy the code or
+            text into the "Input HTML" text area below and click the "Convert" button to generate the JSON output.</p>
+        <p><strong>Tip:</strong> clean the GDoc HTML using <a href="https://www.gdoctohtml.com/">this tool</a></p>
+        <form method="dialog">
+            <button>OK</button>
+        </form>
+    </dialog>
+    <h2>Input HTML:</h2>
+    <textarea id="inputHtml" rows="10" cols="100"></textarea>
+    <br>
+    <button id="convertHtml">Convert</button>
+    <h2>Block Objects:</h2>
+    <textarea id="blockObjectsOutput" rows="10" cols="100" readonly></textarea>
+    <h2>Component Objects:</h2>
+    <textarea id="componentObjectsOutput" rows="10" cols="100" readonly></textarea>
+</body>
+
+</html>
