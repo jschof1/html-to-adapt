@@ -63,7 +63,7 @@ function convertHtmlToJson() {
         }
         h2Array.push(h2Obj);
       }
-      if (h1.textContent.includes("?")) {
+      if (h1.textContent.includes("Q:")) {
         if (nextElem.tagName === "OL" || nextElem.tagName === "UL") {
             // loop through li elements and create options array
             const liElements = nextElem.getElementsByTagName("li");
