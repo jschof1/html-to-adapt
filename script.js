@@ -31,12 +31,12 @@ function convertHtmlToJson() {
   // Parse the input HTML using DOMParser
   var parser = new DOMParser();
   var doc = parser.parseFromString(inputHtml, "text/html");
-
+  var lastLayout = "right"; // Assume the first text component starts on the left
   // Process each H1 element
   var h1Elements = doc.getElementsByTagName("h1");
   for (var i = 0; i < h1Elements.length; i++) {
     var h1 = h1Elements[i];
-    // console.log(h1.textContent);
+    console.log(h1.textContent);
     var body = "";
 
     var nextElem = h1.nextElementSibling;
@@ -45,10 +45,11 @@ function convertHtmlToJson() {
     var feedback = {};
 
     while (nextElem && nextElem.tagName !== "H1") {
-      if (h2Array.length === 0 && !h1.textContent.includes("?")) {
+      if (h2Array.length === 0) {
         // but remove the h2 tag after it
         body += nextElem.outerHTML.replace(/<h2.*h2>/g, "");
       }
+
       if (nextElem.tagName === "H2") {
         var h2Obj = {
           title: nextElem.textContent,
@@ -110,17 +111,6 @@ function convertHtmlToJson() {
               feedbackSplit[1],
           };
         }
-        // if elemenet after h1 is a p tag, add add it body but stop when you reach the next an element that says this <p><strong>
-
-        // Check if the next element is a P tag and does not include a strong tag
-        // if (nextElem.tagName === "P") {
-        //   // If the P tag contains a strong tag, we stop adding to body
-        //   if (nextElem.innerHTML.includes("<strong>")) {
-        //     break; // Exit the loop as we've encountered a P with a strong tag
-        //   } else {
-        //     body += nextElem.innerHTML; // Add the P tag to body
-        //   }
-        // }
       }
       nextElem = nextElem.nextElementSibling;
     }
@@ -164,18 +154,24 @@ function convertHtmlToJson() {
       },
     };
     blockObjects.push(blockObj);
-
+    var layout;
     if (h1.textContent.includes("Q:")) {
+      layout = lastLayout === "left" ? "right" : "left";
+      lastLayout = layout; // Update lastLayout for the next iteration
+      let mcqBody = body
+        .split("<ul>")[0]
+        .split("<ol>")[0]
+        .split("<p><strong>")[0];
       var mcqComponent = {
         _id: componentID,
         _parentId: blockID,
         _type: "component",
         _component: "mcq",
         _classes: "",
-        _layout: "left",
+        _layout: layout,
         title: h1.textContent,
-        displayTitle: h1.textContent.split("Q:")[1],
-        body: body.split("<ul>")[0],
+        displayTitle: "",
+        body: mcqBody,
         instruction: "Choose one option then select Submit.",
         ariaQuestion: "Question text specifically for screen readers.",
         _attempts: 1,
@@ -222,6 +218,7 @@ function convertHtmlToJson() {
       };
       componentObjects.push(mcqComponent);
     } else if (h2Array.length > 0) {
+      layout = "full";
       var accordionComponent = {
         _id: componentID,
         _parentId: blockID,
@@ -230,7 +227,7 @@ function convertHtmlToJson() {
         _classes: "",
         _layout: "full",
         title: h1.textContent,
-        displayTitle: h1.textContent,
+        displayTitle: "",
         body: body,
         instruction: "Select the headings to find out more.",
         _shouldCollapseItems: true,
@@ -242,9 +239,9 @@ function convertHtmlToJson() {
             body: h2.body,
             _imageAlignment: "full",
             _graphic: {
-              src: "course/en/images/example.jpg",
+              src: "",
               alt: "",
-              attribution: "Copyright © 2019",
+              attribution: "",
             },
             _classes: "",
           };
@@ -255,13 +252,30 @@ function convertHtmlToJson() {
       };
       componentObjects.push(accordionComponent);
     } else {
+      var wordCount = body
+        .replace(/<[^>]+>/g, "")
+        .trim()
+        .split(/\s+/)
+        .filter(function (n) {
+          return n != "";
+        }).length;
+
+      if (wordCount > 150) {
+        layout = "full"; // If it's a "full" layout, don't update lastLayout
+      } else {
+        layout = lastLayout === "left" ? "right" : "left";
+        lastLayout = layout; // Update lastLayout for the next iteration
+      }
+
+      // Decide the layout based on the word count
+
       var textComponent = {
         _id: componentID,
         _parentId: blockID,
         _type: "component",
         _component: "text",
         _classes: "",
-        _layout: i % 2 === 0 ? "left" : "right",
+        _layout: layout,
         title: h1.textContent,
         displayTitle: "",
         body: body,
@@ -273,33 +287,36 @@ function convertHtmlToJson() {
       componentObjects.push(textComponent);
     }
 
-    var graphicComponent = {
-      _id: graphicID,
-      _parentId: blockID,
-      _type: "component",
-      _component: "graphic",
-      _classes: "mobile-hide",
-      _layout: i % 2 === 0 ? "right" : "left",
-      title: `graphic for ${blockObj.title}`,
-      displayTitle: "",
-      body: "",
-      instruction: "",
-      _graphic: {
-        alt: "",
-        longdescription: "",
-        large: "https://via.placeholder.com/600x400",
-        small: "https://via.placeholder.com/600x400",
-        attribution: "NO ATTRIBUTION",
-        _url: "",
-        _target: "",
-      },
-      _isScrollable: false,
-      _defaultScrollPercent: 0,
-      _pageLevelProgress: {
-        _isEnabled: false,
-      },
-    };
-    graphicObjects.push(graphicComponent);
+    if (layout !== "full") {
+      var graphicLayout = layout === "left" ? "right" : "left";
+      var graphicComponent = {
+        _id: graphicID,
+        _parentId: blockID,
+        _type: "component",
+        _component: "graphic",
+        _classes: "mobile-hide",
+        _layout: graphicLayout,
+        title: `graphic for ${blockObj.title}`,
+        displayTitle: "",
+        body: "",
+        instruction: "",
+        _graphic: {
+          alt: "",
+          longdescription: "",
+          large: "https://via.placeholder.com/600x400",
+          small: "https://via.placeholder.com/600x400",
+          attribution: "NO ATTRIBUTION",
+          _url: "",
+          _target: "",
+        },
+        _isScrollable: false,
+        _defaultScrollPercent: 0,
+        _pageLevelProgress: {
+          _isEnabled: false,
+        },
+      };
+      graphicObjects.push(graphicComponent);
+    }
   }
 
   // Display JSON output
