@@ -88,27 +88,27 @@ function convertHtmlToJson() {
             feedbackText += currentElem.outerHTML;
             currentElem = currentElem.nextElementSibling;
           }
-          console.log(feedbackText);
+          feedbackText = feedbackText.replace(/<strong>/g, "");
+          feedbackText = feedbackText.replace(/<\/strong><\/p>/g, "");
 
-          const feedbackSplit = feedbackText.split("</strong>");
-          feedback.correct = feedbackSplit[1];
+        
 
           feedback.correct =
             "<p><strong>" +
             "That's right!" +
-            "</p></strong>" +
-            feedbackSplit[1];
+            "</p></strong>"
+            + "<p>" + feedbackText + "</p>";
           feedback._incorrect = {
             notFinal:
               "<p><strong>" +
               "Are you sure about that?" +
-              "</p></strong>" +
-              feedbackSplit[1],
+              "</p></strong>"
+                     + "<p>" + feedbackText + "</p>",
             final:
               "<p><strong>" +
               "Are you sure about that?" +
-              "</p></strong>" +
-              feedbackSplit[1],
+              "</p></strong>"
+                     + "<p>" + feedbackText + "</p>"
           };
         }
       }
