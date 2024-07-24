@@ -19,6 +19,77 @@ This tool converts an HTML document or Google Document into a JSON structure tha
 
 **Tip:** If you are using a Google Document, you can clean the HTML using [this tool](https://www.gdoctohtml.com/).
 
+### Examples
+```
+<h6>_component: dnd-multiple</h6>
+<ul>
+  <li>
+    <h4>Category 1</h4>
+    <ol>
+      <li>Option 1</li>
+      <li>Option 2</li>
+      <li>Option 3</li>
+    </ol>
+  </li>
+  <li>
+    <h4>Category 2</h4>
+    <ol>
+      <li>Option 4</li>
+      <li>Option 5</li>
+      <li>Option 6</li>
+    </ol>
+  </li>
+</ul>
+```
+
+```
+<!-- verticalItems -->
+<h6>_component: verticalItems</h6>
+<div>
+  <h3>Item 1 Title</h3>
+  <p>Item 1 Body</p>
+  <img src="icon1.png" alt="Item 1 Icon">
+  <img src="graphic1.png" alt="Item 1 Graphic">
+</div>
+<div>
+  <h3>Item 2 Title</h3>
+  <p>Item 2 Body</p>
+  <img src="icon2.png" alt="Item 2 Icon">
+  <img src="graphic2.png" alt="Item 2 Graphic">
+</div>
+```
+<!-- pairs -->
+<h6>_component: pairs</h6>
+<ul>
+  <li>
+    <span>Option 1</span>
+    <span>Option 2</span>
+  </li>
+  <li>
+    <span>Option 3</span>
+    <span>Option 4</span>
+  </li>
+</ul>
+```
+<!-- cards -->
+<h6>_component: cards</h6>
+<div>
+  <h3>Card 1 Title</h3>
+  <p>Card 1 Body</p>
+  <img src="graphic1.png" alt="Card 1 Graphic">
+  <button>Action 1</button>
+</div>
+<div>
+  <h3>Card 2 Title</h3>
+  <p>Card 2 Body</p>
+  <img src="graphic2.png" alt="Card 2 Graphic">
+  <button>Action 2</button>
+</div>
+```
+
+<h6>accordion</h6>
+<p>
+<h2>
 ## Credits
 
 Developed by Jack Schofield
